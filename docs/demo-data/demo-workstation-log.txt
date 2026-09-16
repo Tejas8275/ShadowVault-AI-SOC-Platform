@@ -1,0 +1,6 @@
+SYNTHETIC TRAINING FIXTURE — NOT A REAL INCIDENT
+These invented entries are for manual investigator workflow demonstration only.
+2026-01-15T09:00:00+00:00 Demo workstation review started.
+2026-01-15T09:05:00+00:00 Training text references documentation address 192.0.2.10.
+2026-01-15T09:10:00+00:00 Training text references reserved domain telemetry.example.
+No connection occurred. No process was executed. No threat conclusion is implied.

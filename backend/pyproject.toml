@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shadowvault-backend"
+version = "0.1.0"
+description = "ShadowVault AI investigation platform backend"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+    "SQLAlchemy>=2.0.36,<2.1",
+    "pydantic-settings>=2.7,<3",
+    "alembic>=1.16,<2",
+    "openai==3.13.0",
+]
+
+[project.optional-dependencies]
+test = ["httpx>=0.28,<1"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]

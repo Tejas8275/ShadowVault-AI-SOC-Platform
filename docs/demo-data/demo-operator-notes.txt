@@ -1,0 +1,6 @@
+SYNTHETIC TRAINING NOTES — NOT A REAL INCIDENT
+Review demo-workstation-log.txt as an ordinary text fixture.
+Record a manual observation and distinguish fictional occurrence time from server recording time.
+Training correction exercise: an initial manually transcribed IP of 192.0.2.11 can be corrected to 192.0.2.10.
+Retain both observations; explain that the first was an intentional training typo.
+All names, events and network strings in these fixtures are synthetic. Do not resolve or contact them.

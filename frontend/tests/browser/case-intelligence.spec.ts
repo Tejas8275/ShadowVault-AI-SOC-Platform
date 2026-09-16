@@ -1,0 +1,50 @@
+import { test, expect, type Page } from '@playwright/test'
+const id='00000000-0000-0000-0000-000000000014'
+async function open(page:Page){
+ await page.goto('/#cases')
+ await page.getByLabel('Operator token',{exact:true}).fill('sv_operator_'+'B'.repeat(43))
+ await page.getByRole('button',{name:'Connect operator',exact:true}).click()
+ await page.getByRole('link',{name:'Browser fixture',exact:true}).click()
+}
+test('case investigation overview renders real scoped aggregates',async({page})=>{
+ const response=page.waitForResponse(r=>r.url().includes('/incidents/'+id+'?include_intelligence=true'))
+ await open(page)
+ const record=await (await response).json()
+ const panel=page.getByRole('region',{name:'Case investigation overview'})
+ await expect(panel.getByText('Evidence records',{exact:true}).locator('..').locator('strong')).toHaveText(String(record.intelligence.evidence_count))
+ await expect(panel.getByText('Timeline observations',{exact:true}).locator('..').locator('strong')).toHaveText(String(record.intelligence.timeline_count))
+ await expect(panel.getByText('Recorded history revisions',{exact:true}).locator('..').locator('strong')).toHaveText(String(record.intelligence.history_revision_count))
+ await expect(panel.locator('time')).toHaveAttribute('datetime',record.intelligence.latest_activity_at)
+ await page.getByRole('button',{name:'Refresh investigation overview',exact:true}).click()
+ await expect(panel.getByRole('button')).toBeEnabled()
+})
+test('overview loading failure and recovery preserve the case workspace',async({page})=>{
+ let fail=true
+ await page.route('**/incidents/'+id+'?include_intelligence=true',async route=>{
+  if(fail){await new Promise(resolve=>setTimeout(resolve,400));await route.fulfill({status:503,json:{detail:'private'}})}else await route.continue()
+ })
+ await open(page)
+ const panel=page.getByRole('region',{name:'Case investigation overview'})
+ await expect(panel.getByRole('status')).toBeVisible()
+ await expect(panel.getByRole('alert')).toContainText('unavailable counts are not zero')
+ await expect(panel).not.toContainText('private')
+ await expect(page.getByRole('heading',{name:'Browser fixture',exact:true})).toBeVisible()
+ fail=false;await panel.getByRole('button').click()
+ await expect(panel.getByText('Evidence records',{exact:true})).toBeVisible()
+})
+test('new case has honest empty counts and one creation revision',async({page})=>{
+ await open(page)
+ await page.getByRole('link',{name:'Back to cases',exact:true}).click()
+ await page.getByRole('button',{name:'New case',exact:true}).click()
+ await page.getByLabel('Case title',{exact:true}).fill('Empty intelligence fixture')
+ await page.getByRole('button',{name:'Create case',exact:true}).click()
+ const panel=page.getByRole('region',{name:'Case investigation overview'})
+ await expect(panel.getByText('Evidence records',{exact:true}).locator('..').locator('strong')).toHaveText('0')
+ await expect(panel.getByText('Timeline observations',{exact:true}).locator('..').locator('strong')).toHaveText('0')
+ await expect(panel.getByText('Recorded history revisions',{exact:true}).locator('..').locator('strong')).toHaveText('1')
+ await expect(panel.getByText(/No evidence has been registered/)).toBeVisible()
+ await page.setViewportSize({width:390,height:844})
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy()
+ await panel.getByRole('button').focus()
+ await expect(panel.getByRole('button')).toBeFocused()
+})

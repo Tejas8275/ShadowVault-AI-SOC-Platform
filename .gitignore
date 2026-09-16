@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+build/
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+frontend/test-results/
+frontend/playwright-report/
+.npm-cache/
+
+# Database
+*.db
+*.sqlite
+*.db-journal
+*.db-wal
+*.db-shm
+backend/var/
+agents/windows/.spool/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log

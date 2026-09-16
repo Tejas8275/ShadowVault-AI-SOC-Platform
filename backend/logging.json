@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "disable_existing_loggers": true,
+  "formatters": {
+    "private": {"()": "app.core.privacy.SafeServerFormatter"}
+  },
+  "handlers": {
+    "private": {"class": "logging.StreamHandler", "formatter": "private", "stream": "ext://sys.stderr"}
+  },
+  "root": {"handlers": ["private"], "level": "WARNING"},
+  "loggers": {
+    "uvicorn": {"handlers": ["private"], "level": "INFO", "propagate": false},
+    "uvicorn.error": {"handlers": ["private"], "level": "INFO", "propagate": false},
+    "uvicorn.access": {"handlers": [], "level": "CRITICAL", "propagate": false},
+    "app": {"handlers": ["private"], "level": "WARNING", "propagate": false}
+  }
+}
